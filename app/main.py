@@ -20,8 +20,8 @@ def root_point():
   return {"message": "API still working?"}
 
 # POST method at /transaction endpoint for user to create and add new transactions they made
-@app.post("/transactions/", response_model=schemas.Transaction)
-def create_transaction(transaction: schemas.TransactionCreate, db: Session = Depends(get_db)):
+@app.post("/transactions/", response_model=transactions.Transaction)
+def create_transaction(transaction: transactions.TransactionCreate, db: Session = Depends(get_db)):
     db_transaction = models.TransactionTable(**transaction.dict())
     db.add(db_transaction)
     db.commit()
@@ -29,6 +29,6 @@ def create_transaction(transaction: schemas.TransactionCreate, db: Session = Dep
     return db_transaction
 
 # GET method at /transaction endpoint for user to be able to see all transactions made by them
-@app.get("/transactions/", response_model=list[schemas.Transaction])
+@app.get("/transactions/", response_model=list[transactions.Transaction])
 def get_transactions(db: Session = Depends(get_db)):
     return db.query(models.TransactionTable).all()
