@@ -32,3 +32,36 @@ def create_transaction(transaction: transactions.TransactionCreate, db: Session 
 @app.get("/transactions/", response_model=list[transactions.Transaction])
 def get_transactions(db: Session = Depends(get_db)):
     return db.query(models.TransactionTable).all()
+
+# GET method at /transaction endpoint for user to be able to see specific transactions made by them
+@app.get("/transactions/{transaction_id}", response_model=schemas.Transaction)
+def get_transaction(transaction_id: int, db: Session = Depends(get_db)):
+    transaction = db.query(models.TransactionTable).filter(models.TransactionTable.id == transaction_id).first()
+    if not transaction:
+        raise HTTPException(status_code=404, detail="Transaction not found")
+    return transaction
+
+# PUT method at /transaction endpoint for user to be able to update transactions details
+@app.put("/transactions/{transaction_id}", response_model=schemas.Transaction)
+def update_transaction(transaction_id: int, updated_data: schemas.TransactionCreate, db: Session = Depends(get_db)):
+    transaction = db.query(models.TransactionTable).filter(models.TransactionTable.id == transaction_id).first()
+    if not transaction:
+        raise HTTPException(status_code=404, detail="Transaction not found")
+
+    for key, value in updated_data.dict().items():
+        setattr(transaction, key, value)
+
+    db.commit()
+    db.refresh(transaction)
+    return transaction
+
+# DELETE method at /transaction endpoint for user to be able to remove/delete specific transactions
+@app.delete("/transactions/{transaction_id}")
+def delete_transaction(transaction_id: int, db: Session = Depends(get_db)):
+    transaction = db.query(models.TransactionTable).filter(models.TransactionTable.id == transaction_id).first()
+    if not transaction:
+        raise HTTPException(status_code=404, detail="Transaction not found")
+
+    db.delete(transaction)
+    db.commit()
+    return {"message": "Transaction deleted successfully"}
