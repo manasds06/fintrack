@@ -34,7 +34,7 @@ def get_transactions(db: Session = Depends(get_db)):
     return db.query(models.TransactionTable).all()
 
 # GET method at /transaction endpoint for user to be able to see specific transactions made by them
-@app.get("/transactions/{transaction_id}", response_model=schemas.Transaction)
+@app.get("/transactions/{transaction_id}", response_model=transactions.Transaction)
 def get_transaction(transaction_id: int, db: Session = Depends(get_db)):
     transaction = db.query(models.TransactionTable).filter(models.TransactionTable.id == transaction_id).first()
     if not transaction:
