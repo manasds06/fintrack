@@ -42,8 +42,8 @@ def get_transaction(transaction_id: int, db: Session = Depends(get_db)):
     return transaction
 
 # PUT method at /transaction endpoint for user to be able to update transactions details
-@app.put("/transactions/{transaction_id}", response_model=schemas.Transaction)
-def update_transaction(transaction_id: int, updated_data: schemas.TransactionCreate, db: Session = Depends(get_db)):
+@app.put("/transactions/{transaction_id}", response_model=transactions.Transaction)
+def update_transaction(transaction_id: int, updated_data: transactions.TransactionCreate, db: Session = Depends(get_db)):
     transaction = db.query(models.TransactionTable).filter(models.TransactionTable.id == transaction_id).first()
     if not transaction:
         raise HTTPException(status_code=404, detail="Transaction not found")
