@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from ..core.database import get_db
-from ..table_models import transaction_model
-from ..validation_schemas import transactions
+from ..table_models.transaction_model import TransactionTable
+from ..validation_schemas.transactions import Transaction, TransactionCreate
 
 # Creates a mini API
 router = APIRouter(
@@ -11,31 +11,31 @@ router = APIRouter(
 )
 
 # POST method at /transaction endpoint for user to create and add new transactions they made
-@router.post("/", response_model=transactions.Transaction)
-def create_transaction(transaction: transactions.TransactionCreate, db: Session = Depends(get_db)):
-    db_transaction = transaction_model.TransactionTable(**transaction.dict())
+@router.post("/", response_model=Transaction)
+def create_transaction(transaction: TransactionCreate, db: Session = Depends(get_db)):
+    db_transaction = TransactionTable(**transaction.dict())
     db.add(db_transaction)
     db.commit()
     db.refresh(db_transaction)
     return db_transaction
 
 # GET method at /transaction endpoint for user to be able to see all transactions made by them
-@router.get("/", response_model=list[transactions.Transaction])
+@router.get("/", response_model=list[Transaction])
 def get_transactions(db: Session = Depends(get_db)):
-    return db.query(transaction_model.TransactionTable).all()
+    return db.query(TransactionTable).all()
 
 # GET method at /transaction endpoint for user to be able to see specific transactions made by them
-@router.get("/{transaction_id}", response_model=transactions.Transaction)
+@router.get("/{transaction_id}", response_model=Transaction)
 def get_transaction(transaction_id: int, db: Session = Depends(get_db)):
-    transaction = db.query(transaction_model.TransactionTable).filter(transaction_model.TransactionTable.id == transaction_id).first()
+    transaction = db.query(TransactionTable).filter(TransactionTable.id == transaction_id).first()
     if not transaction:
         raise HTTPException(status_code=404, detail="Transaction not found")
     return transaction
 
 # PUT method at /transaction endpoint for user to be able to update transactions details
-@router.put("/{transaction_id}", response_model=transactions.Transaction)
-def update_transaction(transaction_id: int, updated_data: transactions.TransactionCreate, db: Session = Depends(get_db)):
-    transaction = db.query(transaction_model.TransactionTable).filter(transaction_model.TransactionTable.id == transaction_id).first()
+@router.put("/{transaction_id}", response_model=Transaction)
+def update_transaction(transaction_id: int, updated_data: TransactionCreate, db: Session = Depends(get_db)):
+    transaction = db.query(TransactionTable).filter(TransactionTable.id == transaction_id).first()
     if not transaction:
         raise HTTPException(status_code=404, detail="Transaction not found")
 
@@ -49,7 +49,7 @@ def update_transaction(transaction_id: int, updated_data: transactions.Transacti
 # DELETE method at /transaction endpoint for user to be able to remove/delete specific transactions
 @router.delete("/{transaction_id}")
 def delete_transaction(transaction_id: int, db: Session = Depends(get_db)):
-    transaction = db.query(transaction_model.TransactionTable).filter(transaction_model.TransactionTable.id == transaction_id).first()
+    transaction = db.query(TransactionTable).filter(TransactionTable.id == transaction_id).first()
     if not transaction:
         raise HTTPException(status_code=404, detail="Transaction not found")
 
