@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from ..core.database import get_db
-from ..table_models import transaction_model
-from ..validation_schemas import transactions
+from ..table_models import budget_model
+from ..validation_schemas import budgets
 
 # Creates a mini API
 router = APIRouter(
