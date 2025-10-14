@@ -22,8 +22,8 @@ def root_point():
   return {"message": "API still working?"}
 
 # POST method at /transaction endpoint for user to create and add new transactions they made
-@app.post("/transactions/", response_model=transaction_model.Transaction)
-def create_transaction(transaction: transaction_model.TransactionCreate, db: Session = Depends(get_db)):
+@app.post("/transactions/", response_model=transactions.Transaction)
+def create_transaction(transaction: transactions.TransactionCreate, db: Session = Depends(get_db)):
     db_transaction = transaction_model.TransactionTable(**transaction.dict())
     db.add(db_transaction)
     db.commit()
