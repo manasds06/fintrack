@@ -4,7 +4,7 @@ from datetime import datetime
 class TransactionBase(BaseModel):
     amount: float
     title: str
-    category: str = None
+    category: str
 
 class TransactionCreate(TransactionBase):
     pass
