@@ -1,7 +1,9 @@
 from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
-from . import models, transactions
-from .database import engine, SessionLocal
+
+from .table_models import transaction_model
+from .validation_schemas import transactions
+from .core.database import engine, SessionLocal
 
 # Creates table for data
 models.Base.metadata.create_all(bind=engine)
