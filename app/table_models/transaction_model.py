@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
+from sqlalchemy.orm import relationship
 from datetime import datetime
 from ..core.database import Base
 
@@ -11,3 +12,7 @@ class TransactionTable(Base):
     amount = Column(Float)
     category = Column(String)
     timestamp = Column(DateTime, default=datetime.utcnow)
+
+    budget_id = Column(Integer, ForeignKey("Budgets.id"), nullable=True)
+
+    budget = relationship("BudgetTable", back_populates="transactions")

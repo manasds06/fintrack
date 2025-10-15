@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from ..core.database import get_db
 from ..table_models.transaction_model import TransactionTable
+from ..table_models.budget_model import BudgetTable
 from ..validation_schemas.transactions import Transaction, TransactionCreate
 
 # Creates a mini API
@@ -15,8 +16,15 @@ router = APIRouter(
 def create_transaction(transaction: TransactionCreate, db: Session = Depends(get_db)):
     db_transaction = TransactionTable(**transaction.dict())
     db.add(db_transaction)
+
+    budget = db.query(BudgetTable).filter(BudgetTable.category == db_transaction.category).first()
+    if budget:
+        budget.spent += db_transaction.amount
+    
     db.commit()
     db.refresh(db_transaction)
+    if budget:
+        db.refresh(budget)
     return db_transaction
 
 # GET method at /transaction endpoint for user to be able to see all transactions made by them
@@ -52,6 +60,12 @@ def delete_transaction(transaction_id: int, db: Session = Depends(get_db)):
     transaction = db.query(TransactionTable).filter(TransactionTable.id == transaction_id).first()
     if not transaction:
         raise HTTPException(status_code=404, detail="Transaction not found")
+
+    budget = db.query(BudgetTable).filter(BudgetTable.category == transaction.category).first()
+    if budget:
+        budget.spent -= transaction.amount
+        if budget.spent < 0:
+            budget.spent = 0
 
     db.delete(transaction)
     db.commit()
