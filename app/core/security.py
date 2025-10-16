@@ -11,16 +11,14 @@ from ..table_models.user_model import UserTable
 
 # Load environment variables
 load_dotenv()
-print("SECRET_KEY:", os.getenv("SECRET_KEY"))
-print("ALGORITHM:", os.getenv("ALGORITHM"))
 
 # Environment variables
-SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = os.getenv("ALGORITHM")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
+SECRET_KEY = "623hj68egd3dnm7y4dgsjuf37wt3rhd"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # OAuth2 scheme — this tells FastAPI how to find the token
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
 
 # Password hashing setup
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

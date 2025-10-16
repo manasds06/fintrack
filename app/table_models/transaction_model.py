@@ -5,7 +5,7 @@ from ..core.database import Base
 
 # TransactionTable class that tells sqlalchemy what type of table to create
 class TransactionTable(Base):
-    __tablename__ = "Transactions"
+    __tablename__ = "transactions"
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)
@@ -13,8 +13,10 @@ class TransactionTable(Base):
     category = Column(String)
     timestamp = Column(DateTime, default=datetime.utcnow)
 
-    budget_id = Column(Integer, ForeignKey("Budgets.id"), nullable=True)
+    budget_id = Column(Integer, ForeignKey("budgets.id"), nullable=True)
+    
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
-    budget = relationship("BudgetTable", back_populates="transactions")
+    budgets = relationship("BudgetTable", back_populates="transactions")
 
-    user = relationship("UserTable", back_populates="transactions")
+    users = relationship("UserTable", back_populates="transactions")
