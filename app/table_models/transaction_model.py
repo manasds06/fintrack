@@ -16,3 +16,5 @@ class TransactionTable(Base):
     budget_id = Column(Integer, ForeignKey("Budgets.id"), nullable=True)
 
     budget = relationship("BudgetTable", back_populates="transactions")
+
+    user = relationship("UserTable", back_populates="transactions")
