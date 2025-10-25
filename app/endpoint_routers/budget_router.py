@@ -31,6 +31,7 @@ def create_budget(budget: BudgetCreate, db: Session = Depends(get_db), current_u
     return db_budget
 
 # GET method at /transaction endpoint for user to be able to see all transactions made by them
+@router.get("/", response_model=list[Budget])
 def get_budgets(db: Session = Depends(get_db), current_user: UserTable = Depends(get_current_user)):
     return db.query(BudgetTable).filter(BudgetTable.user_id == current_user.id).all()
 
@@ -47,6 +48,7 @@ def get_budget(budget_id: int, db: Session = Depends(get_db), current_user: User
     return budget
 
 # PUT method at /transaction endpoint for user to be able to update transactions details
+@router.put("/{budget_id}", response_model=Budget)
 def update_budget(budget_id: int, updated_budget: BudgetCreate, db: Session = Depends(get_db), current_user: UserTable = Depends(get_current_user)):
     budget = db.query(BudgetTable).filter(
         BudgetTable.id == budget_id,
